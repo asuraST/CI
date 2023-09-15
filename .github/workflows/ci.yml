@@ -1,0 +1,33 @@
+name: Build GWH API Docker Image
+
+on:
+  push:
+    branches: ['main']
+
+jobs:
+  build-and-push-image:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Semantic versioning
+      id: versioning
+      uses: PaulHatch/semantic-version@v4.0.2
+      with:
+        branch: main
+        tag_prefix: "v"
+        major_pattern: "BREAKING CHANGE:"
+        minor_pattern: "feat:"
+        format: "v${major}.${minor}.${patch}-prerelease${increment}"
+      env:
+        MAJOR_VERSION: ${{ steps.versioning.outputs.major }}
+        MINOR_VERSION: ${{ steps.versioning.outputs.minor }}
+        PATCH_VERSION: ${{ steps.versioning.outputs.patch }}
+        PRERELEASE_VERSION: ${{ steps.versioning.outputs.increment }}
+
+    - name: Log into github docker registry
+      run:  echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u $ --password-stdin
+    - name: Build the Docker image
+      run: docker-compose -f docker-compose-ci.yml build
+    - name: Push the Docker image
+      run: docker-compose -f docker-compose-ci.yml push
