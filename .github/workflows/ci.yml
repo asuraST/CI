@@ -1,4 +1,4 @@
-name: Build GWH API Docker Image
+name: Build GWH API Docker Images
 
 on:
   push:
