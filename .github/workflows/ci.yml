@@ -10,8 +10,14 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-    - uses: christophebedard/tag-version-commit@v1
+    - name: Semantic versioning
+      id: versioning
+      uses: PaulHatch/semantic-version@v4.0.2
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
+        branch: main
+        tag_prefix: "v"
+        major_pattern: "BREAKING CHANGE:"
+        minor_pattern: "feat:"
+        format: "v${major}.${minor}.${patch}-prerelease${increment}"
     - name: Log into github docker registry
       run:  echo "Hello" 
