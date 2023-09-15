@@ -10,24 +10,8 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-    - name: Semantic versioning
-      id: versioning
-      uses: PaulHatch/semantic-version@v4.0.2
+    - uses: christophebedard/tag-version-commit@v1
       with:
-        branch: main
-        tag_prefix: "v"
-        major_pattern: "BREAKING CHANGE:"
-        minor_pattern: "feat:"
-        format: "v${major}.${minor}.${patch}-prerelease${increment}"
-      env:
-        MAJOR_VERSION: ${{ steps.versioning.outputs.major }}
-        MINOR_VERSION: ${{ steps.versioning.outputs.minor }}
-        PATCH_VERSION: ${{ steps.versioning.outputs.patch }}
-        PRERELEASE_VERSION: ${{ steps.versioning.outputs.increment }}
-
+        token: ${{ secrets.GITHUB_TOKEN }}
     - name: Log into github docker registry
-      run:  echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u $ --password-stdin
-    - name: Build the Docker image
-      run: docker-compose -f docker-compose-ci.yml build
-    - name: Push the Docker image
-      run: docker-compose -f docker-compose-ci.yml push
+      run:  echo "Hello" 
