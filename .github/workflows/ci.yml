@@ -3,6 +3,9 @@ name: Build GWH API Docker Images
 on:
   push:
     branches: ['main']
+    
+env: 
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
   build-and-push-image:
