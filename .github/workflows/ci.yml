@@ -1,4 +1,4 @@
-name: Build GWH API Docker Images
+name: CI/CD for versioning using Github Actions
 
 on:
   push:
@@ -13,8 +13,20 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-    - name: Bump version and push tag
-      uses: anothrNick/github-tag-action@main
+      with:
+        fetch-depth: 0
+    - name: Semantic versioning
+      id: versioning
+      uses: paulhatch/semantic-version@v5.2.1
+      with:
+        tag_prefix: "v"
+        version_format: "v${major}.${minor}.${patch}"
+    - name: Set Docker image version
+      run: echo "TAG=${{ steps.versioning.outputs.version }}" >> $GITHUB_ENV  
+    - name: Create Release
+      uses: actions/create-release@v1
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        
+        GITHUB_TOKEN: ${{ secrets.github_token}}
+      with:
+        tag_name: ${{ steps.versioning.outputs.version}}
+        release_name: ${{ steps.versioning.outputs.version }}
